@@ -1,6 +1,9 @@
 Requestlog
 ==========
 
+[![pipeline status](https://gitlab.com/mpom/requestlog/badges/master/pipeline.svg)](https://gitlab.com/mpom/requestlog/commits/master) [![coverage report](https://gitlab.com/mpom/requestlog/badges/master/coverage.svg)](https://gitlab.com/mpom/requestlog/commits/master)
+
+
 Middleware who logs each request with their headers and the body into the database. 
 
 
@@ -13,6 +16,10 @@ for low traffic sites.
 The log is written to the table `requestlog_requestlog`.
 
 The body field is truncated at 1024 bytes.
+
+Credits
+-------
+Based on https://github.com/ASKBOT/django-request-logging
 
 
 Settings
