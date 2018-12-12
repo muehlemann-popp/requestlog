@@ -3,7 +3,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 class RequestLog(models.Model):
-    user = models.ForeignKey(get_user_model(), null=True, blank=True)
+    user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     ip_addr = models.GenericIPAddressField()
     url = models.TextField()
     session_key = models.CharField(max_length=40, null=True)
