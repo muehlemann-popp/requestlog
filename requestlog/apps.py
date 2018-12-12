@@ -5,7 +5,7 @@ from django.apps import AppConfig as BaseAppConfig
 class AppConfig(BaseAppConfig):
     name = "requestlog"
     middlewares = (
-         (10, 'apps.requestlog.middleware.RequestLoggingMiddleware'),
+         (10, 'requestlog.middleware.RequestLoggingMiddleware'),
     )
     def ready(self):
         pass
