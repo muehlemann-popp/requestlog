@@ -1,0 +1,11 @@
+/*.egg-info
+/__pycache__
+*.pyc
+static/
+/node_modules
+/yarn-error.log
+*.mo
+/reports
+/.coverage
+/build
+dist

@@ -1,0 +1,32 @@
+image: docker:stable
+
+services:
+- docker:dind
+
+stages: [test]
+
+cache:
+    paths:
+    - ~/.cache
+
+variables:
+    POSTGRES_DB: requestlog
+    POSTGRES_USER: root
+    POSTGRES_PASSWORD: "coffy"
+
+test:
+    stage: test
+    tags: [hoenggerberg-docker]
+    image: registry.gitlab.com/mpom/images/python:slim
+    services:
+    - postgres:latest
+    variables:
+        DJANGO_SETTINGS_MODULE: sample.settings
+        DATABASE_URL: psql://root:coffy@postgres:5432/requestlog
+    script:
+    - pip install -e .
+    - cd __testproject
+    - coverage run ./manage.py test --no-input
+    - coverage report
+    coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
+
