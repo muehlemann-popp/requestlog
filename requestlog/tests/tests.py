@@ -88,3 +88,17 @@ class RequestlogMiddlewareTest(TestCase):
                 entries = RequestLog.objects.all()
                 self.assertEqual(entries[1].headers, {'HTTP_HEADER_TO_HIDE': '********', 'HTTP_COOKIE': ''})
                 self.assertEqual(entries[1].query, {'secret': '********'})
+
+
+class RequestlogUtilsTest(TestCase):
+    def test_delete_old_entries(self):
+        from django.utils import timezone
+        from datetime import timedelta
+        from ..utils import delete_old_entries
+        RequestLog.objects.create(timestamp=timezone.now(), ip_addr='1.2.3.4', headers={})
+        old_item = RequestLog.objects.create(ip_addr='1.2.3.4', headers={})
+        old_item.timestamp=timezone.now() - timedelta(days=60)
+        old_item.save()
+
+        delete_old_entries(older_than_days=30)
+        self.assertEqual(1, RequestLog.objects.all().count())

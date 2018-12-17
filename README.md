@@ -41,3 +41,32 @@ Filter certain IPs (e.g. internal Kubernetes health check requests)
 Filter certain paths by Regex (including query string):
 
     REQUEST_LOGGING_IGNORE_PATHS = [ '/admin/login' ]
+
+Purge old entries
+-----------------
+
+You can use the following management command which deletes entries older than 3 days:
+
+    ./manage.py requestlog_purge
+
+Or you trigger the task with Celery beat by adding a shared task to your projects task list:
+
+In `myapp/tasks.py`
+
+    from celery import shared_task
+    
+    @shared_task
+    def delete_old_requestlog_entries():
+        from requestlog.utils import delete_old_entries
+        delete_old_entries(older_than_days=14)
+    
+In your settings: 
+
+    CELERY_BEAT_SCHEDULE = {
+        ...    
+        'myapp.tasks.delete_old_requestlog_entries': {
+            'task': 'myapp.tasks.delete_old_requestlog_entries',
+            'schedule': crontab(hour='0', minute='0'),        
+        }
+    }
+    
