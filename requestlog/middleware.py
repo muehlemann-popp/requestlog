@@ -90,7 +90,10 @@ class RequestLoggingMiddleware(object):
 
     def log_response(self, request: WSGIRequest, response: Response):
         self.log.status_code = response.status_code
-        self.log.response_snippet = response.content[0:256]
+        if "decode" in dir(response.content):
+            self.log.response_snippet = response.content.decode("utf-8")[0:256]
+        else:
+            self.log.response_snippet = response.content[0:256]
         # DRF populates the user object after all middlewares. Hence we log only here
         user = getattr(request, 'user', None)
         if user:
