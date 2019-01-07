@@ -93,6 +93,8 @@ class RequestLoggingMiddleware(object):
         self.log.response_snippet = response.content[0:256]
         # DRF populates the user object after all middlewares. Hence we log only here
         user = getattr(request, 'user', None)
-        if user and user.is_authenticated():
-            self.log.user = user
+        if user:
+            if (callable(user.is_authenticated) and user.is_authenticated()) \
+            or user.is_authenticated:
+                self.log.user = user
 

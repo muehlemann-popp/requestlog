@@ -19,7 +19,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='requestlog',
-    version='1.0.2',
+    version='1.1.2',
     description='Middleware to log http requests to the database',
     long_description=README,
     packages=find_packages(),
