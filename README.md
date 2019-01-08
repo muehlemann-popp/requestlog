@@ -59,7 +59,7 @@ In your settings:
         'requestlog.tasks.delete_old_requestlog_entries': {
             'task': 'requestlog.tasks.delete_old_requestlog_entries',
             'schedule': crontab(hour=2, minute=0)
-             'args': (30,) # This is the number of days to keep the entries 
+            'args': (30,) # This is the number of days to keep the entries 
         },
     }
     

@@ -43,18 +43,14 @@ class RequestLoggingMiddleware(object):
 
     def _is_ignored_ip(self):
         ignored_ips = getattr(settings, 'REQUEST_LOGGING_IGNORE_IPS', [])
-        if isinstance(settings.REQUEST_LOGGING_IGNORE_IPS, str):
-            ignored_ips = [settings.REQUEST_LOGGING_IGNORE_IPS]
-        else:
-            ignored_ips = settings.REQUEST_LOGGING_IGNORE_IPS
+        if isinstance(ignored_ips, str):
+            ignored_ips = [ignored_ips]
         return self.ip_addr in ignored_ips
 
     def _is_ignored_url(self):
         ignored_urls_re = getattr(settings, 'REQUEST_LOGGING_IGNORE_PATHS', [])
-        if isinstance(settings.REQUEST_LOGGING_IGNORE_PATHS, str):
-            ignored_urls_re = [settings.REQUEST_LOGGING_IGNORE_PATHS]
-        else:
-            ignored_urls_re = settings.REQUEST_LOGGING_IGNORE_PATHS
+        if isinstance(ignored_urls_re, str):
+            ignored_urls_re = [ignored_urls_re]
         regexes = [ re.compile(r) for r in ignored_urls_re ]
         return any(regex.match(self.request.path) for regex in regexes)
 
@@ -62,10 +58,8 @@ class RequestLoggingMiddleware(object):
     def clean_data(cls, raw_dict):
         """ Replace variables containing sensitive data """
         hide_parameters = getattr(settings, 'REQUEST_LOGGING_HIDE_PARAMETERS', [])
-        if isinstance(settings.REQUEST_LOGGING_HIDE_PARAMETERS, str):
-            hide_parameters = [settings.REQUEST_LOGGING_HIDE_PARAMETERS]
-        else:
-            hide_parameters = settings.REQUEST_LOGGING_HIDE_PARAMETERS
+        if isinstance(hide_parameters, str):
+            hide_parameters = [hide_parameters]
 
         replace_dict_values(
             raw_dict,
