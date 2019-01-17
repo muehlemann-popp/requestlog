@@ -8,7 +8,7 @@ class RequestLog(models.Model):
     url = models.TextField()
     session_key = models.CharField(max_length=40, null=True)
     method = models.CharField(max_length=16)
-    headers = JSONField()
+    headers = JSONField(null=True)
     query = JSONField(null=True)
     body = models.BinaryField(null=True)
     cookies = JSONField(null=True)

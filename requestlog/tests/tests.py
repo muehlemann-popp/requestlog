@@ -71,6 +71,22 @@ class RequestlogMiddlewareTest(TestCase):
             self.assertEqual(entries[0].response_snippet, "1" * 256)
             self.assertEqual(entries[0].headers, {'HTTP_COOKIE': '', 'HTTP_SOME_HEADER': 'my header data'})
 
+    def test_requestFileUpload_does_not_store_content(self):
+        with self.settings(REQUEST_LOGGING_ENABLED=True):
+            request = self.factory.get('/')
+
+            def get_file_response(request):
+                from django.http import FileResponse
+                response = FileResponse("1" * 1000)
+                response.status_code = 200
+                return response
+
+            middleware = RequestLoggingMiddleware(get_file_response)
+            middleware(request)
+            entries = RequestLog.objects.all()
+            self.assertEqual(len(entries), 1)
+            self.assertIsNone(entries[0].response_snippet)
+
     @unittest.skipIf(os.environ.get('ENV'), "default")
     def test_secret_values_should_be_replaced(self):
         with self.settings(REQUEST_LOGGING_ENABLED=True):
