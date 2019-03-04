@@ -22,7 +22,10 @@ test:
     - postgres:latest
     variables:
         DJANGO_SETTINGS_MODULE: sample.settings
-        DATABASE_URL: psql://root:coffy@postgres:5432/requestlog
+        DB_NAME: requestlog
+        DB_USER: root
+        DB_PASSWORD: coffy
+        DB_HOST: postgres
     script:
     - pip install -e .
     - cd __testproject

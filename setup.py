@@ -19,20 +19,18 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='requestlog',
-    version='1.1.4',
+    version='1.1.6',
     description='Middleware to log http requests to the database',
     long_description=README,
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
         'Django>=1.9',
-        'psycopg2',
         'coverage',
         'flake8',
         'pep8',
-        'polib~=1.0',
-        'django-environ',
-        'httplib2'
+        'httplib2',
+        'psycopg2-binary'
     ],
     url='https://gitlab.com/mpom/requestlog',
     classifiers=[
