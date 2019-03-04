@@ -3,8 +3,7 @@
 Settings for test.
 """
 from __future__ import unicode_literals, absolute_import
-
-from environ import environ
+import os
 
 DEBUG = True
 USE_TZ = True
@@ -14,7 +13,13 @@ SECRET_KEY = "**************************************************"
 
 # Note, this package only works with PostgreSQL due to the JSONField
 DATABASES = {
-    'default': environ.Env().db()
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+    }
 }
 
 ROOT_URLCONF = "sample.urls"
