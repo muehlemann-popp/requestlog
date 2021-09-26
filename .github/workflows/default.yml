@@ -41,7 +41,7 @@ jobs:
         DB_HOST: postgres
       run: |
         cd __testproject
-        coverage run ./manage.py test --no-input
+        coverage run ./manage.py test --no-input requestlog.tests
         coverage report
         coverage xml -o coverage.xml
     - name: SonarCloud Scan
