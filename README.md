@@ -1,8 +1,7 @@
 Requestlog
 ==========
 
-[![pipeline status](https://gitlab.com/mpom/requestlog/badges/master/pipeline.svg)](https://gitlab.com/mpom/requestlog/commits/master) [![coverage report](https://gitlab.com/mpom/requestlog/badges/master/coverage.svg)](https://gitlab.com/mpom/requestlog/commits/master)
-
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=muehlemann-popp_requestlog&metric=alert_status)](https://sonarcloud.io/dashboard?id=muehlemann-popp_requestlog) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=muehlemann-popp_requestlog&metric=coverage)](https://sonarcloud.io/dashboard?id=muehlemann-popp_requestlog) 
 
 Middleware who logs each request with their headers and the body into the database. 
 
