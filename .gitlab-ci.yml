@@ -16,8 +16,6 @@ variables:
 
 test:
     stage: test
-    tags: [hoenggerberg-docker]
-    image: registry.gitlab.com/mpom/images/python:slim
     services:
     - postgres:latest
     variables:

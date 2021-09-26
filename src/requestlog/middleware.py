@@ -75,7 +75,7 @@ class RequestLoggingMiddleware(object):
         self.log.url = request.path
         self.log.query =  self.clean_data(request.GET.copy())
         self.log.body = request.body[:1024]
-        if 'session' in request:
+        if hasattr(request, 'session'):
             self.log.session_key = request.session.session_key
         self.log.method = request.method
         headerdict = {k: v for k, v in request.META.items() if k.startswith('HTTP_')}
@@ -83,16 +83,15 @@ class RequestLoggingMiddleware(object):
         self.log.cookies = request.COOKIES
 
     def log_response(self, request: WSGIRequest, response: Response):
-        self.log.status_code = response.status_code
+        self.log.status_code = getattr(response, 'status_code')
         if hasattr(response, "content"):
-            if "decode" in dir(response.content):
-                self.log.response_snippet = response.content.decode("utf-8")[0:256]
+            if "decode" in dir(response.content): # type: ignore
+                self.log.response_snippet = response.content.decode("utf-8")[0:256] # type: ignore
             else:
-                self.log.response_snippet = response.content[0:256]
+                self.log.response_snippet = response.content[0:256] # type: ignore
         # DRF populates the user object after all middlewares. Hence we log only here
         user = getattr(request, 'user', None)
-        if user:
-            if (callable(user.is_authenticated) and user.is_authenticated()) \
-            or user.is_authenticated:
+        if user and ((callable(user.is_authenticated) and user.is_authenticated()) \
+            or user.is_authenticated):
                 self.log.user = user
 

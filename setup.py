@@ -2,7 +2,7 @@
 
 import os
 
-from setuptools import find_packages, setup
+import setuptools
 
 '''
 Learn more about packaging here:
@@ -17,12 +17,13 @@ if os.path.exists(readme_path):
 
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-setup(
+setuptools.setup(
     name='requestlog',
     version='1.1.7',
     description='Middleware to log http requests to the database',
     long_description=README,
-    packages=find_packages(),
+    packages=setuptools.find_packages(where="src"),
+    package_dir={"": "src"},
     include_package_data=True,
     install_requires=[
         'Django>=1.9',
@@ -30,7 +31,9 @@ setup(
         'flake8',
         'pep8',
         'httplib2',
-        'psycopg2-binary'
+        'psycopg2-binary',
+        'django-stubs',
+        'celery-stubs',
     ],
     url='https://gitlab.com/mpom/requestlog',
     classifiers=[

@@ -1,0 +1,12 @@
+[tool.poetry]
+name = "requestlog"
+version = "0.1.0"
+description = ""
+authors = ["Silvan Muehlemann <silvan.muehlemann@muehlemann-popp.ch>"]
+
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"

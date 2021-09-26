@@ -25,7 +25,7 @@ def get_client_ip(request):
 
 def delete_old_entries(older_than_days=30):
     """
-    Delet old entries
+    Delete old entries
     :param older_than_days: Delete tasks older than this amount of days
     :return: number of deleted rows
     """

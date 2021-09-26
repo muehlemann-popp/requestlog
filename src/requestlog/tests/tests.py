@@ -60,7 +60,7 @@ class RequestlogMiddlewareTest(TestCase):
         with self.settings(REQUEST_LOGGING_ENABLED=True):
             request = self.factory.get('/customer/details?foo=bar', HTTP_SOME_HEADER='my header data',
                                        HEADER_TO_IGNORE='Ignore me')
-            response = self.middleware(request)
+            self.middleware(request)
             entries = RequestLog.objects.all()
             self.assertEqual(len(entries), 1)
             self.assertEqual(entries[0].url, '/customer/details')
@@ -92,7 +92,7 @@ class RequestlogMiddlewareTest(TestCase):
         with self.settings(REQUEST_LOGGING_ENABLED=True):
             # Hiding disabled
             request = self.factory.post('/customer/details?secret=password', HTTP_HEADER_TO_HIDE='very secret')
-            response = self.middleware(request)
+            self.middleware(request)
             entries = RequestLog.objects.all()
             self.assertEqual(entries[0].headers, {'HTTP_HEADER_TO_HIDE': 'very secret', 'HTTP_COOKIE': ''})
             self.assertEqual(entries[0].query, {'secret': 'password'})
@@ -100,7 +100,7 @@ class RequestlogMiddlewareTest(TestCase):
             # Hiding enabled
             with self.settings(REQUEST_LOGGING_HIDE_PARAMETERS=['HTTP_HEADER_TO_HIDE', 'secret']):
                 request = self.factory.post('/customer/details?secret=password', HTTP_HEADER_TO_HIDE='very secret')
-                response = self.middleware(request)
+                self.middleware(request)
                 entries = RequestLog.objects.all()
                 self.assertEqual(entries[1].headers, {'HTTP_HEADER_TO_HIDE': '********', 'HTTP_COOKIE': ''})
                 self.assertEqual(entries[1].query, {'secret': '********'})
