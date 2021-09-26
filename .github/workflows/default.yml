@@ -43,7 +43,7 @@ jobs:
         cd __testproject
         coverage run ./manage.py test --no-input
         coverage report
-        coverage xml -o /coverage.xml
+        coverage xml -o coverage.xml
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
