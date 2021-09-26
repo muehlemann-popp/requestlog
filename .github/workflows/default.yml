@@ -10,11 +10,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    container: python:3.9-alpine
     strategy:
       max-parallel: 4
     services:
       postgres:
         image: postgres
+        ports:
+          - 5432
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
