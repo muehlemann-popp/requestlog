@@ -43,8 +43,10 @@ jobs:
         coverage run ./manage.py test --no-input requestlog.tests
         coverage report
         coverage xml -o /coverage.xml
+        ls -l /
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: ls -l /
