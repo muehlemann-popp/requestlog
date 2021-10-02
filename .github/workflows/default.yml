@@ -44,10 +44,9 @@ jobs:
         coverage report
         coverage xml -o ../cov.xml
         cat ../cov.xml
+        sed -i 's/\/__w\/requestlog\/requestlog//g' cov.xml
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    - name: Check Coverage
-      run: ls -l /
