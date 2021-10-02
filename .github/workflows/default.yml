@@ -8,11 +8,8 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     container: python:3.9-alpine
-    strategy:
-      max-parallel: 4
     services:
       postgres:
         image: postgres
@@ -26,7 +23,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-
     - uses: actions/checkout@v2
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
@@ -47,8 +43,8 @@ jobs:
         coverage run ./manage.py test --no-input requestlog.tests
         coverage report
         coverage xml -o coverage.xml
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#    - name: SonarCloud Scan
+#      uses: sonarsource/sonarcloud-github-action@master
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
