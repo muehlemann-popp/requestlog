@@ -43,7 +43,7 @@ jobs:
         coverage run ./manage.py test --no-input requestlog.tests
         coverage report
         coverage xml -o ../cov.xml
-        ls -l /
+        cat ../cov.xml
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
