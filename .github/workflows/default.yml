@@ -44,7 +44,7 @@ jobs:
         coverage report
         coverage xml -o ../cov.xml
         cat ../cov.xml
-        sed -i 's/\/__w\/requestlog\/requestlog//g' ../cov.xml
+        sed -i 's/\/__w\/requestlog\/requestlog\///g' ../cov.xml
         cat ../cov.xml
 
     - name: SonarCloud Scan
