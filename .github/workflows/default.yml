@@ -34,8 +34,8 @@ jobs:
     - name: Run Tests
       env:
         DJANGO_SETTINGS_MODULE: sample.settings
-        DB_NAME: requestlog
-        DB_USER: root
+        DB_NAME: postgres
+        DB_USER: postgres
         DB_PASSWORD: postgres
         DB_HOST: postgres
       run: |
