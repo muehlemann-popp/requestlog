@@ -40,6 +40,7 @@ jobs:
         DB_HOST: postgres
       run: |
         cd __testproject
+        pip install coverage
         coverage run ./manage.py test --no-input requestlog.tests
         coverage report
         coverage xml -o ../cov.xml

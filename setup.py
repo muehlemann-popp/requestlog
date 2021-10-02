@@ -27,14 +27,12 @@ setuptools.setup(
     include_package_data=True,
     install_requires=[
         'Django>=1.9',
-        'coverage',
-        'flake8',
-        'pep8',
         'httplib2',
         'psycopg2-binary',
         'django-stubs',
         'celery-stubs',
     ],
+    tests_require=['coverage'],
     url='https://gitlab.com/mpom/requestlog',
     classifiers=[
         'Framework :: Django',
