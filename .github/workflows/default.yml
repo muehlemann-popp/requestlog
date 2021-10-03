@@ -52,4 +52,5 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     - name: mypy
       run: |
+        pip install django-stubs celery-stubs
         mypy src/requestlog

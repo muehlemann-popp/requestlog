@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 
 import os
-
 import setuptools
-
-'''
-Learn more about packaging here:
-https://packaging.python.org/distributing/#setup-args
-'''
 
 README = ''
 readme_path = os.path.join(os.path.dirname(__file__), 'README.md')
@@ -24,24 +18,23 @@ setuptools.setup(
     long_description=README,
     packages=setuptools.find_packages(where="src"),
     package_dir={"": "src"},
+    long_description_content_type="text/markdown",
+    url="https://github.com/muehlemann-popp/requestlog",
     include_package_data=True,
     install_requires=[
         'Django>=1.9',
         'httplib2',
         'psycopg2-binary',
-        'django-stubs',
-        'celery-stubs',
     ],
     tests_require=['coverage'],
-    url='https://gitlab.com/mpom/requestlog',
     classifiers=[
         'Framework :: Django',
         'Intended Audience :: Developers',
-        'License :: Other/Proprietary License',
+        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Topic :: Software Development'
     ],
     author='Silvan Mühlemann',
     author_email='silvan.muehlemann@muehlemann-popp.ch',
-    license='License :: Other/Proprietary License',
+    license='MIT',
 )
