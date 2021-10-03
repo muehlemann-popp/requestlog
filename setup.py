@@ -12,9 +12,9 @@ if os.path.exists(readme_path):
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setuptools.setup(
-    name='requestlog',
+    name='django-requestlog',
     version='1.1.7',
-    description='Middleware to log http requests to the database',
+    description='Middleware to log http requests to postgresql',
     long_description=README,
     packages=setuptools.find_packages(where="src"),
     package_dir={"": "src"},
