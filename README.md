@@ -3,14 +3,15 @@ Requestlog
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=muehlemann-popp_requestlog&metric=alert_status)](https://sonarcloud.io/dashboard?id=muehlemann-popp_requestlog) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=muehlemann-popp_requestlog&metric=coverage)](https://sonarcloud.io/dashboard?id=muehlemann-popp_requestlog) 
 
-Middleware who logs each request with their headers and the body into the database. 
+Middleware who logs each request with their headers and the body into the database for diagnostic purposes. 
 
 
 Why Logging to the database?
 ----------------------------
 Logging to the database instead of to a logfile has the advantage that it can be 
-searched by people not having  access to the server logs. Of course this only works 
-for low traffic sites. 
+searched by people not having access to the server logs. Of course this only works 
+for low traffic sites. And I recommend to purge those logs regularly with the provided 
+manage command or celery task.
 
 The log is written to the table `requestlog_requestlog`.
 
