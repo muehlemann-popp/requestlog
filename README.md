@@ -1,9 +1,9 @@
-Requestlog
-==========
+Django-Requestlog
+=================
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=muehlemann-popp_requestlog&metric=alert_status)](https://sonarcloud.io/dashboard?id=muehlemann-popp_requestlog) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=muehlemann-popp_requestlog&metric=coverage)](https://sonarcloud.io/dashboard?id=muehlemann-popp_requestlog) 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=muehlemann-popp_requestlog&metric=alert_status)](https://sonarcloud.io/dashboard?id=muehlemann-popp_requestlog) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=muehlemann-popp_requestlog&metric=coverage)](https://sonarcloud.io/dashboard?id=muehlemann-popp_requestlog) ![PyPi](https://img.shields.io/pypi/v/django-requestlog.svg) 
 
-Middleware who logs each request with their headers and the body into the database for diagnostic purposes. 
+Middleware who logs each request with their headers and the body into to PostgreSQL for diagnostic purposes. 
 
 
 Why Logging to the database?
@@ -13,9 +13,22 @@ searched by people not having access to the server logs. Of course this only wor
 for low traffic sites. And I recommend to purge those logs regularly with the provided 
 manage command or celery task.
 
+What is logged?
+---------------
+
 The log is written to the table `requestlog_requestlog`.
 
-The body field is truncated at 1024 bytes.
+* timestamp
+* client IP address
+* django user-id
+* method
+* URL
+* header fields
+* cookies
+* query parameter
+* POST body
+* HTTP status code
+* the first 1024 of the response
 
 Credits
 -------
