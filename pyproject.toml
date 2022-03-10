@@ -1,8 +1,13 @@
 [tool.poetry]
 name = "requestlog"
-version = "0.1.0"
+version = "1.1.9"
 description = ""
 authors = ["Silvan Muehlemann <silvan.muehlemann@muehlemann-popp.ch>"]
+
+[tool.poetry.dependencies]
+django = ">=3.1"
+httplib2 = "*"
+psycopg2-binary = "*"
 
 [build-system]
 requires = [
