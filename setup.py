@@ -22,7 +22,7 @@ setuptools.setup(
     url="https://github.com/muehlemann-popp/requestlog",
     include_package_data=True,
     install_requires=[
-        'Django>=1.9',
+        'Django>=3.1',
         'httplib2',
         'psycopg2-binary',
     ],
