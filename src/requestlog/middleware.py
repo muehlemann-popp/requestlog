@@ -7,13 +7,14 @@ from django.conf import settings
 from django.core.handlers.wsgi import WSGIRequest
 from httplib2 import Response
 
+from .body_parsers import default_body_parser
 from .models import RequestLog
 from .utils import replace_dict_values, get_client_ip
 
 LOG = logging.getLogger(__name__)
 
 
-class RequestLoggingMiddleware(object):
+class RequestLoggingMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -51,7 +52,7 @@ class RequestLoggingMiddleware(object):
         ignored_urls_re = getattr(settings, 'REQUEST_LOGGING_IGNORE_PATHS', [])
         if isinstance(ignored_urls_re, str):
             ignored_urls_re = [ignored_urls_re]
-        regexes = [ re.compile(r) for r in ignored_urls_re ]
+        regexes = [re.compile(r) for r in ignored_urls_re]
         return any(regex.match(self.request.path) for regex in regexes)
 
     @classmethod
@@ -73,8 +74,11 @@ class RequestLoggingMiddleware(object):
 
         self.log.ip_addr = self.ip_addr
         self.log.url = request.path
-        self.log.query =  self.clean_data(request.GET.copy())
+        self.log.query = self.clean_data(request.GET.copy())
         self.log.body = request.body[:1024]
+        body_parser = getattr(settings, 'REQUEST_LOGGING_BODY_PARSER', None)
+        if body_parser:
+            self.log.body_parsed = default_body_parser.parse(self.request)
         if hasattr(request, 'session'):
             self.log.session_key = request.session.session_key
         self.log.method = request.method
@@ -85,13 +89,12 @@ class RequestLoggingMiddleware(object):
     def log_response(self, request: WSGIRequest, response: Response):
         self.log.status_code = getattr(response, 'status_code')
         if hasattr(response, "content"):
-            if "decode" in dir(response.content): # type: ignore
-                self.log.response_snippet = response.content.decode("utf-8")[0:256] # type: ignore
+            if "decode" in dir(response.content):  # type: ignore
+                self.log.response_snippet = response.content.decode("utf-8")[0:256]  # type: ignore
             else:
-                self.log.response_snippet = response.content[0:256] # type: ignore
+                self.log.response_snippet = response.content[0:256]  # type: ignore
         # DRF populates the user object after all middlewares. Hence we log only here
         user = getattr(request, 'user', None)
         if user and ((callable(user.is_authenticated) and user.is_authenticated()) \
             or user.is_authenticated):
                 self.log.user = user
-
