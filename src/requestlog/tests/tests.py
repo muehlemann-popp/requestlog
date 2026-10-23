@@ -1,12 +1,14 @@
 import os
 import unittest
 
-from django.test import TestCase
-
+from django.core.checks import run_checks
 from django.http import HttpResponse
-from django.test import RequestFactory
+from django.test import RequestFactory, SimpleTestCase, TestCase
+
+from ..checks import check_settings
 from ..middleware import RequestLoggingMiddleware
 from ..models import RequestLog
+from ..utils import get_client_ip
 
 
 class RequestlogMiddlewareTest(TestCase):
@@ -42,6 +44,19 @@ class RequestlogMiddlewareTest(TestCase):
             request.META['REMOTE_ADDR'] = '1.2.3.4'
             self.middleware(request)
             self.assertEqual(RequestLog.objects.all().count(), 1)
+
+    def test_invalid_x_forwarded_for_logs_remote_addr(self):
+        with self.settings(REQUEST_LOGGING_ENABLED=True):
+            request = self.factory.get('/wordpress/', HTTP_X_FORWARDED_FOR='localhost', REMOTE_ADDR='192.0.2.1')
+            self.middleware(request)
+            self.assertEqual(list(RequestLog.objects.values_list('ip_addr', flat=True)), ['192.0.2.1'])
+
+    def test_x_forwarded_for_rejected_by_the_ip_field_is_still_logged(self):
+        # Python accepts IPv6 zone IDs of any length, Django rejects addresses longer than 39 characters
+        with self.settings(REQUEST_LOGGING_ENABLED=True):
+            request = self.factory.get('/', HTTP_X_FORWARDED_FOR='fe80::1%' + 'a' * 32)
+            self.middleware(request)
+            self.assertEqual(RequestLog.objects.count(), 1)
 
     def test_urls_can_be_ignored(self):
         # positive case
@@ -118,3 +133,68 @@ class RequestlogUtilsTest(TestCase):
 
         delete_old_entries(older_than_days=30)
         self.assertEqual(1, RequestLog.objects.all().count())
+
+
+class GetClientIpTest(SimpleTestCase):
+
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    def _get_client_ip(self, x_forwarded_for=None):
+        extra = {'REMOTE_ADDR': '192.0.2.1'}
+        if x_forwarded_for is not None:
+            extra['HTTP_X_FORWARDED_FOR'] = x_forwarded_for
+        return get_client_ip(self.factory.get('/', **extra))
+
+    def test_uses_remote_addr_without_x_forwarded_for(self):
+        self.assertEqual(self._get_client_ip(), '192.0.2.1')
+
+    def test_uses_leftmost_x_forwarded_for_entry_by_default(self):
+        self.assertEqual(self._get_client_ip('203.0.113.7, 198.51.100.1'), '203.0.113.7')
+
+    def test_falls_back_to_remote_addr_when_entry_is_not_an_ip(self):
+        self.assertEqual(self._get_client_ip('localhost, 198.51.100.1'), '192.0.2.1')
+
+    def test_num_proxies_selects_entry_appended_by_the_proxies(self):
+        with self.settings(REQUEST_LOGGING_NUM_PROXIES=2):
+            self.assertEqual(self._get_client_ip('localhost, 203.0.113.7, 198.51.100.1'), '203.0.113.7')
+
+    def test_num_proxies_equal_to_the_entry_count_selects_the_leftmost_entry(self):
+        with self.settings(REQUEST_LOGGING_NUM_PROXIES=2):
+            self.assertEqual(self._get_client_ip('203.0.113.7, 198.51.100.1'), '203.0.113.7')
+
+    def test_num_proxies_accepts_ipv6_entries(self):
+        with self.settings(REQUEST_LOGGING_NUM_PROXIES=1):
+            self.assertEqual(self._get_client_ip('203.0.113.7, 2001:db8::1'), '2001:db8::1')
+
+    def test_num_proxies_zero_ignores_x_forwarded_for(self):
+        with self.settings(REQUEST_LOGGING_NUM_PROXIES=0):
+            self.assertEqual(self._get_client_ip('203.0.113.7'), '192.0.2.1')
+
+    def test_falls_back_to_remote_addr_when_there_are_fewer_entries_than_proxies(self):
+        # The header did not pass through all proxies, so even its rightmost entry may come from the client
+        with self.settings(REQUEST_LOGGING_NUM_PROXIES=2):
+            self.assertEqual(self._get_client_ip('203.0.113.7'), '192.0.2.1')
+
+    def test_invalid_num_proxies_falls_back_to_remote_addr(self):
+        # System checks don't run under gunicorn & co, so a misconfiguration must not break requests
+        for value in (-1, '2', True):
+            with self.subTest(value=value), self.settings(REQUEST_LOGGING_NUM_PROXIES=value):
+                self.assertEqual(self._get_client_ip('203.0.113.7'), '192.0.2.1')
+
+
+class SettingsCheckTest(SimpleTestCase):
+
+    def test_accepts_valid_num_proxies(self):
+        for value in (None, 0, 2):
+            with self.subTest(value=value), self.settings(REQUEST_LOGGING_NUM_PROXIES=value):
+                self.assertEqual(check_settings(None), [])
+
+    def test_rejects_invalid_num_proxies(self):
+        for value in (-1, '2', True):
+            with self.subTest(value=value), self.settings(REQUEST_LOGGING_NUM_PROXIES=value):
+                self.assertEqual([error.id for error in check_settings(None)], ['requestlog.E001'])
+
+    def test_check_is_registered(self):
+        with self.settings(REQUEST_LOGGING_NUM_PROXIES=-1):
+            self.assertIn('requestlog.E001', [error.id for error in run_checks()])

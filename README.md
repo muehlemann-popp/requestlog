@@ -55,6 +55,27 @@ Filter certain paths by Regex (including query string):
 
     REQUEST_LOGGING_IGNORE_PATHS = [ '/admin/login' ]
 
+### Client IP behind proxies
+
+By default the client IP is the leftmost entry of the `X-Forwarded-For` header. The client sets that
+entry itself, so it can be spoofed. If your app runs behind proxies, tell the middleware how many
+entries they append and it logs the entry they wrote instead:
+
+    REQUEST_LOGGING_NUM_PROXIES = 1
+
+* `None` (default): use the leftmost entry.
+* `0`: ignore `X-Forwarded-For` and use `REMOTE_ADDR`.
+* `n`: use the n-th entry from the right. This is usually the number of proxies, but count what your
+  infrastructure actually appends: a Google Cloud load balancer adds the client IP *and* its own
+  address, so it needs `2`.
+
+`REMOTE_ADDR` is used instead whenever the header is missing, has fewer than `n` entries or the
+selected entry is not a valid IP address (e.g. `localhost`, or an entry with a port like `1.2.3.4:5678`).
+
+`REQUEST_LOGGING_IGNORE_IPS` is matched against the same IP. With the default, a client can therefore
+keep its requests out of the log by sending an ignored IP in `X-Forwarded-For`; setting
+`REQUEST_LOGGING_NUM_PROXIES` prevents that.
+
 Purge old entries
 -----------------
 
