@@ -23,11 +23,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
+    - uses: actions/checkout@v7
     - name: Install Dependencies
       run: |
         pip install -e .
@@ -44,11 +40,11 @@ jobs:
         coverage run ./manage.py test --no-input requestlog.tests
         coverage report
         coverage xml -o ../cov.xml
-        sed -i 's/\/__w\/requestlog\/requestlog\//\/github\/workspace\//g' ../cov.xml
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
+    - name: SonarQube Cloud Scan
+      # GitHub doesn't pass secrets to workflows run for pull requests from forks
+      if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+      uses: SonarSource/sonarqube-scan-action@v8
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     - name: mypy
       run: |
