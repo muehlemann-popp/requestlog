@@ -13,7 +13,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setuptools.setup(
     name='django-requestlog',
-    version='1.1.8',
+    version='1.2.0',
     description='Middleware to log http requests to postgresql',
     long_description=README,
     packages=setuptools.find_packages(where="src"),
